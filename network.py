@@ -1,3 +1,5 @@
+from __future__ import division
+
 from axon import Axon
 from layer import InputLayer, HiddenLayer, OutputLayer
 from node import HasInputAxonsMixin, InputNode, HasOutputAxonsMixin, BiasNode
@@ -69,6 +71,16 @@ class NeuralNet:
         return weights
 
     def set_weights(self, weights):
+        counter = { 'value' : 0 }
+
+        def increment_count(_):
+            counter['value'] += 1
+
+        self.__for_each_axon(increment_count)
+
+        if (len(weights) != counter['value']):
+            raise ValueError("Wrong number of weights! Expected %s but got %s" % (counter['value'], len(weights)))
+
         def set_weight(a):
             a.weight = weights.pop(0)
             a.error_sum = 0
